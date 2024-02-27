@@ -1,0 +1,68 @@
+/*& ------------------------------ */
+/*& -------- COLOR MODES --------- */
+/*& ------------------------------ */
+
+.light {
+    --main-bg-color: rgb(225, 255, 255);
+    --main-text-color: rgb(130, 130, 200);
+
+    --menu-bar-color: rgb(200, 175, 255);
+    --menu-font-color: rgb(100, 100, 255);
+    --menu-hover-color: rgb(200, 225, 255);
+    --menu-hover-font-color: rgb(200, 100, 200);
+
+    --contents-bg-color: rgb(235, 230, 255);
+
+    --file-bg-color: rgb(255, 250, 255);
+    --file-font-color: rgb(100, 100, 100);
+
+    --filename-hover: rgb(255, 150, 150);
+
+    --file-bar-color: lightgrey;
+}
+
+.dark {
+    --main-bg-color: rgb(55, 65, 75);
+    --main-text-color: rgb(200, 180, 220);
+
+    --menu-bar-color: rgb(100, 100, 120);
+    --menu-font-color: rgb(100, 200, 255);
+    --menu-hover-color: rgb(200, 225, 255);
+    --menu-hover-font-color: rgb(200, 100, 200);
+
+    --contents-bg-color: rgb(110, 120, 135);
+
+    --file-bg-color: rgb(100, 100, 120);
+    --file-font-color: rgb(250, 230, 240);
+
+    --filename-hover: rgb(100, 200, 255);
+
+    --file-bar-color: grey;
+}
+
+/*& ------------------------------ */
+/*& ------ CLASS PROPERTIES ------ */
+/*& ------------------------------ */
+
+HTML {
+    height: 100%;
+
+    margin:0;
+    padding:0;
+}
+
+BODY {
+    position: relative;
+    width: 90%;
+    height: auto;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    padding-bottom: 5px;
+
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: var(--main-bg-color);
+
+    color: var(--main-text-color);
+}
