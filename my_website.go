@@ -6,10 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var projects = []string{
+	"Chess",
+	"Flashcards",
+}
+
+var hobbies = []string{
+	"Anime",
+	"Recipies",
+}
+
 func homepageHandler(context *gin.Context) {
 	context.HTML(http.StatusOK, "homepage.html", gin.H{
-		"faviconURL": "/images/cat.png",
-		"superStyle": "/styles/super.css",
+		"faviconURL": 	"/images/cat.png",
+		"superStyle": 	"/styles/super.css",
+		"projects":		projects,
+		"hobbies":		hobbies,
 	})
 }
 

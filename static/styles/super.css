@@ -3,41 +3,15 @@
 /*& ------------------------------ */
 
 .light {
-    --main-bg-color: rgb(225, 255, 255);
-    --main-text-color: rgb(130, 130, 200);
+    --main-bg-color: rgb(250, 250, 255);
+    --main-text-color: rgb(75, 75, 150);
 
-    --menu-bar-color: rgb(200, 175, 255);
-    --menu-font-color: rgb(100, 100, 255);
-    --menu-hover-color: rgb(200, 225, 255);
-    --menu-hover-font-color: rgb(200, 100, 200);
+    --menu-bar-color: rgb(200, 220, 255);
+    --menu-font-color: rgb(50, 50, 150);
+    --menu-hover-color: rgb(50, 100, 200);
+    --menu-hover-font-color: rgb(200, 220, 255);
 
-    --contents-bg-color: rgb(235, 230, 255);
-
-    --file-bg-color: rgb(255, 250, 255);
-    --file-font-color: rgb(100, 100, 100);
-
-    --filename-hover: rgb(255, 150, 150);
-
-    --file-bar-color: lightgrey;
-}
-
-.dark {
-    --main-bg-color: rgb(55, 65, 75);
-    --main-text-color: rgb(200, 180, 220);
-
-    --menu-bar-color: rgb(100, 100, 120);
-    --menu-font-color: rgb(100, 200, 255);
-    --menu-hover-color: rgb(200, 225, 255);
-    --menu-hover-font-color: rgb(200, 100, 200);
-
-    --contents-bg-color: rgb(110, 120, 135);
-
-    --file-bg-color: rgb(100, 100, 120);
-    --file-font-color: rgb(250, 230, 240);
-
-    --filename-hover: rgb(100, 200, 255);
-
-    --file-bar-color: grey;
+    --shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
 }
 
 /*& ------------------------------ */
@@ -49,11 +23,13 @@ HTML {
 
     margin:0;
     padding:0;
+
+    --menu-padding: 14px 16px;
 }
 
 BODY {
     position: relative;
-    width: 90%;
+    width: 100%;
     height: auto;
 
     margin-left: auto;
@@ -65,4 +41,81 @@ BODY {
     background-color: var(--main-bg-color);
 
     color: var(--main-text-color);
+}
+
+/*? NAVIGATION BAR */
+
+.nav-bar {
+    overflow: hidden;
+
+    background-color: var(--menu-bar-color);
+    box-shadow: var(--shadow);
+}
+
+.nav-bar a {
+    float: left;
+
+    color: var(--menu-font-color);
+    text-align: center;
+    text-decoration: none;
+
+    padding: var(--menu-padding);
+}
+
+.nav-dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.nav-dropdown .nav-dropbtn {
+    border: none;
+    outline: none;
+
+    color: var(--menu-font-color);
+    font: inherit;
+
+    padding: var(--menu-padding);
+    margin: 0;
+
+    background-color: inherit;
+}
+
+.nav-bar a:hover, .nav-dropdown:hover .nav-dropbtn {
+    background-color: var(--menu-hover-color);
+    color: var(--menu-hover-font-color);
+}
+
+.nav-dropcontent {
+    display: none;
+    position: absolute;
+
+    background-color: var(--menu-bar-color);
+    box-shadow: var(--shadow);
+    z-index: 1;
+}
+
+.nav-dropcontent a {
+    float: none;
+    color: var(--menu-font-color);
+    padding: var(--menu-padding);
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.nav-dropcontent a:hover {
+    background-color: var(--menu-hover-color);
+}
+
+.nav-dropdown:hover .nav-dropcontent {
+    display: block;
+}
+
+/*? CONTENTS */
+
+.contents {
+    width: 90%;
+    padding-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }

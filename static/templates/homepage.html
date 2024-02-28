@@ -7,8 +7,27 @@
         <link rel="shortcut icon" href="{{ .faviconURL }}" type="image/png">
     </head>
     <body class="light">
-        <h1>
-            Homepage
-        </h1>
+        <div class="nav-bar">
+            <a href="#home"> Home </a>
+            <div class="nav-dropdown">
+                <button class="nav-dropbtn"> Projects </button>
+                <div class="nav-dropcontent">
+                    {{range .projects}}
+                    <a href="#"> {{.}} </a>
+                    {{end}}
+                </div>
+            </div>
+            <div class="nav-dropdown">
+                <button class="nav-dropbtn"> Hobbies </button>
+                <div class="nav-dropcontent">
+                    {{range .hobbies}}
+                    <a href="#"> {{.}} </a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        <div class="contents">
+            This is my homepage.
+        </div>
     </body>
 </html>
