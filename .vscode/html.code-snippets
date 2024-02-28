@@ -1,0 +1,49 @@
+{
+	// Place your MyWebsite workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	"HTML Template": {
+		"scope": "html",
+		"prefix": "go-html",
+		"body": [
+			"<!DOCTYPE html>",
+			"<html lang=\"en\">",
+			"	<head>",
+			"		<meta CHARSET=\"utf-8\">",
+			"		<title> PAGE TITLE </title>",
+			"		<link rel=\"stylesheet\" href=\"{{ .superStyle }}\">",
+			"		<link rel=\"shortcut icon\" href=\"{{ .faviconURL }}\" type=\"image/png\">",
+			"	</head>",
+			"	<body class=\"light\">",
+			"		<div class=\"nav-bar\">",
+			"			<a href=\"#home\"> Home </a>",
+			"			<div class=\"nav-dropdown\">",
+			"				<button class=\"nav-dropbtn\"> Projects </button>",
+			"				<div class=\"nav-dropcontent\">",
+			"					{{range .projects}}",
+			"					<a href=\"#\"> {{.}} </a>",
+			"					{{end}}",
+			"				</div>",
+			"			</div>",
+			"			<div class=\"nav-dropdown\">",
+			"				<button class=\"nav-dropbtn\"> Hobbies </button>",
+			"				<div class=\"nav-dropcontent\">",
+			"					{{range .hobbies}}",
+			"					<a href=\"#\"> {{.}} </a>",
+			"					{{end}}",
+			"				</div>",
+			"			</div>",
+			"		</div>",
+			"		<div class=\"contents\">",
+			"			HTML content",
+			"		</div>",
+			"	</body>",
+			"</html>",
+		],
+		"description": "HTML with GoLang"
+	}
+}
