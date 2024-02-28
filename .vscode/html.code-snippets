@@ -16,6 +16,7 @@
 			"		<meta CHARSET=\"utf-8\">",
 			"		<title>PAGE TITLE</title>",
 			"		<link rel=\"stylesheet\" href=\"{{ .superStyle }}\">",
+			"		<link rel=\"stylesheet\" href=\"{{ .thisStyle }}\">",
 			"		<link rel=\"shortcut icon\" href=\"{{ .faviconURL }}\" type=\"image/png\">",
 			"	</head>",
 			"	<body class=\"light\">",

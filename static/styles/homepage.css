@@ -1,3 +1,112 @@
-.contents {
+.page-contents * {
+    box-sizing: border-box;
+}
+  
+.timeline {
+    position: relative;
+    margin: 0 auto;
+
+    --event-color: rgb(230, 230, 255);
     
+    --timeline-color: rgb(230, 230, 230);
+    --circle-border-color: rgb(125, 75, 125);
+
+    --timeline-width: 6px;
+    --timeline-left-margin: calc(-1 * var(--timeline-width) / 2);
+
+    --reference-top-position: 30px;
+
+    --circle-width: 25px;
+    --circle-heigth: 25px;
+    --circle-border-width: 2px;
+    --circle-right-position:
+        calc(-1 * (var(--circle-border-width) + var(--circle-width)) / 2 - 1px);
+    --circle-left-position:
+        calc(-1 * (var(--circle-border-width) + var(--circle-width)) / 2 - 1px);
+    --circle-top-position:
+        calc(var(--reference-top-position) - (var(--circle-width) + var(--circle-border-width)) / 2);
+
+    --arrow-heigth: 20px;
+    --arrow-top-position:
+        calc(var(--reference-top-position) - var(--arrow-heigth));
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: var(--timeline-width);
+    background-color: var(--timeline-color);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: var(--timeline-left-margin);
+}
+
+/*? Event containers */
+.container {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 50%;
+}
+
+/*? Circles */
+.container::after {
+    content: '';
+    position: absolute;
+    width: var(--circle-width);
+    height: var(--circle-heigth);
+    right: var(--circle-right-position);
+    background-color: var(--timeline-color);
+    border: var(--circle-border-width) solid var(--circle-border-color);
+    top: var(--circle-top-position);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    left: 50%;
+}
+
+/*? Event arrows */
+.left::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: var(--arrow-top-position);
+    width: 0;
+    z-index: 1;
+    right: 0px; z-index: 10;
+    border: solid;
+    border-width: var(--arrow-heigth) 0 var(--arrow-heigth) var(--arrow-heigth);
+    border-color: transparent transparent transparent var(--event-color);
+}
+
+.right::before {
+    content: " ";
+    height: 0;
+    position: absolute;
+    top: var(--arrow-top-position);
+    width: 0;
+    z-index: 1;
+    left: 30px;
+    border: solid;
+    border-width: var(--arrow-heigth) var(--arrow-heigth) var(--arrow-heigth) 0;
+    border-color: transparent var(--event-color) transparent transparent;
+}
+
+/*? Fix the circle for containers on the right side */
+.right::after {
+    left: var(--circle-right-position);
+}
+
+.event {
+    padding: 20px 30px;
+    background-color: var(--event-color);
+    position: relative;
+    border-radius: 6px;
 }

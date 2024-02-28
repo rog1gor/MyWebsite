@@ -47,6 +47,7 @@ BODY {
 
 .nav-bar {
     overflow: hidden;
+    padding: 0 5%;
 
     background-color: var(--menu-bar-color);
     box-shadow: var(--shadow);
@@ -113,9 +114,9 @@ BODY {
 
 /*? CONTENTS */
 
-.contents {
+.page-contents {
     width: 90%;
-    padding-top: 20px;
+    margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
 }
