@@ -5,6 +5,7 @@
 .timeline {
     position: relative;
     margin: 0 auto;
+    padding-bottom: 50px;
 
     --event-color: rgb(230, 230, 255);
     
@@ -26,9 +27,14 @@
     --circle-top-position:
         calc(var(--reference-top-position) - (var(--circle-width) + var(--circle-border-width)) / 2);
 
-    --arrow-heigth: 20px;
+    --container-padding-vertical: 10px;
+    --container-padding-horizontal: 40px;
+
+    --arrow-heigth: 15px;
     --arrow-top-position:
         calc(var(--reference-top-position) - var(--arrow-heigth));
+    --arrow-align:
+        calc(var(--container-padding-horizontal) - var(--arrow-heigth)/sqrt(2)); 
 }
 
 .timeline::after {
@@ -44,7 +50,7 @@
 
 /*? Event containers */
 .container {
-    padding: 10px 40px;
+    padding: var(--container-padding-vertical) var(--container-padding-horizontal);
     position: relative;
     background-color: inherit;
     width: 50%;
@@ -80,7 +86,7 @@
     top: var(--arrow-top-position);
     width: 0;
     z-index: 1;
-    right: 0px; z-index: 10;
+    right: var(--arrow-align);
     border: solid;
     border-width: var(--arrow-heigth) 0 var(--arrow-heigth) var(--arrow-heigth);
     border-color: transparent transparent transparent var(--event-color);
@@ -93,7 +99,7 @@
     top: var(--arrow-top-position);
     width: 0;
     z-index: 1;
-    left: 30px;
+    left: var(--arrow-align);
     border: solid;
     border-width: var(--arrow-heigth) var(--arrow-heigth) var(--arrow-heigth) 0;
     border-color: transparent var(--event-color) transparent transparent;
