@@ -18,11 +18,13 @@ var hobbies = []string{
 
 func homepageHandler(context *gin.Context) {
 	context.HTML(http.StatusOK, "homepage.html", gin.H{
-		"faviconURL": 	"/images/cat.png",
-		"superStyle": 	"/styles/super.css",
-		"thisStyle":	"/styles/homepage.css",
-		"projects":		projects,
-		"hobbies":		hobbies,
+		"faviconURL": "/images/cat.png",
+		"githubURL":  "/images/github.png",
+		"linkeinURL": "/images/linkedin.png",
+		"superStyle": "/styles/super.css",
+		"thisStyle":  "/styles/homepage.css",
+		"projects":   projects,
+		"hobbies":    hobbies,
 	})
 }
 

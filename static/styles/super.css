@@ -63,6 +63,17 @@ BODY {
     padding: var(--menu-padding);
 }
 
+.nav-bar .social {
+    float: right;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.social img {
+    height: 34px;
+    width: 34px;
+}
+
 .nav-dropdown {
     float: left;
     overflow: hidden;
