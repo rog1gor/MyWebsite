@@ -34,15 +34,19 @@ function coordinatesToId(xc, yc) {
     return xc.toString() + 'x' + yc.toString();
 }
 
+let onclick_listeners = [];
+
 function removeOnlickcs() {
-    document.onclick = null;
     for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
         for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
             let tile = document.getElementById(coordinatesToId(xc, yc));
-            tile.onclick = null;
             tile.querySelector(".dot").style.display = "none";
         }
     }
+    for (const listener of onclick_listeners) {
+        listener();
+    }
+    onclick_listeners = [];
 }
 
 class ChessPiece {
@@ -206,9 +210,12 @@ class BoardTile {
     }
 
     addDottedOnlick(chb, possible_moves) {
+        //? Get objects for event function
         let piece = this.getPiece();
         let coordinates = this.getCoordinates();
-        this.tile.addEventListener('click', function() {
+
+        //? Create event function
+        let event_func = function() {
             removeOnlickcs();
             for (let i = 0; i < possible_moves.length; i++) {
                 let xc = possible_moves[i][0];
@@ -217,17 +224,38 @@ class BoardTile {
                 chb.Tiles[xc][yc].pieceMoveOnlick(
                     chb, piece, coordinates);
             }
+        };
+
+        //? Store event listener remover
+        let node = this.tile;
+        onclick_listeners.push(function() {
+            node.removeEventListener('click', event_func);
         });
+
+        //? Add event listener
+        this.tile.addEventListener('click', event_func);
     }
 
     //todo add promotions
     pieceMoveOnlick(chb, piece, prev_cords, this_cords) {
+        //? Get objects for event function
         this_cords = this.getCoordinates();
-        this.tile.addEventListener('click', function() {
+
+        //? Create event function
+        let event_func = function() {
             chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
             chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
             chb.resetBoardOnclicks();
+        };
+
+        //? Store event listener remover
+        let node = this.tile;
+        onclick_listeners.push(function() {
+            node.removeEventListener('click', event_func);
         });
+
+        //? Add event listener
+        this.tile.addEventListener('click', event_func);
     }
 }
 
@@ -467,7 +495,6 @@ class ChessBoard {
 
     resetBoardOnclicks() {
         removeOnlickcs();
-
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
             for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
