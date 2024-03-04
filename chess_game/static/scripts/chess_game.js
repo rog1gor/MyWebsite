@@ -166,6 +166,10 @@ class BoardTile {
         return this.piece.getPieceType();
     }
 
+    getPiece() {
+        return this.piece.getPiece();
+    }
+
     getCoordinates() {
         return this.coordinates;
     }
@@ -202,7 +206,7 @@ class BoardTile {
     }
 
     addDottedOnlick(chb, possible_moves) {
-        let piece = this.piece.getPiece();
+        let piece = this.getPiece();
         let coordinates = this.getCoordinates();
         this.tile.addEventListener('click', function() {
             removeOnlickcs();
@@ -216,6 +220,7 @@ class BoardTile {
         });
     }
 
+    //todo add promotions
     pieceMoveOnlick(chb, piece, prev_cords, this_cords) {
         this_cords = this.getCoordinates();
         this.tile.addEventListener('click', function() {
@@ -315,7 +320,7 @@ class ChessBoard {
         }
     }
 
-    //todo add EnPassant and promotions
+    //todo add EnPassant
     possiblePawnMoves(xc, yc) {
         let yc_alignment = 1;
         if (this.Tiles[xc][yc].isBlack()) {
