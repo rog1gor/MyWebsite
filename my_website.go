@@ -2,19 +2,11 @@ package main
 
 import (
 	"net/http"
+	"website/chess_game"
+	"website/global"
 
 	"github.com/gin-gonic/gin"
 )
-
-var projects = []string{
-	"Chess",
-	"Flashcards",
-}
-
-var hobbies = []string{
-	"Anime",
-	"Recipies",
-}
 
 func homepageHandler(context *gin.Context) {
 	context.HTML(http.StatusOK, "homepage.html", gin.H{
@@ -23,18 +15,24 @@ func homepageHandler(context *gin.Context) {
 		"linkeinURL": "/images/linkedin.png",
 		"superStyle": "/styles/super.css",
 		"thisStyle":  "/styles/homepage.css",
-		"projects":   projects,
-		"hobbies":    hobbies,
+		"projects":   global.Projects,
+		"hobbies":    global.Hobbies,
 	})
 }
 
 func main() {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("static/templates/*.html")
+	router.LoadHTMLFiles(
+		"static/templates/homepage.html",
+		chess_game.HTML,
+	)
 	router.Static("/images", "static/images")
 	router.Static("/styles", "static/styles")
 
+	chess_game.LoadChessGameStaticFiles(router)
+
 	router.GET("/homepage", homepageHandler)
+	router.GET("/chess_game", chess_game.ChessGameHandler)
 	router.Run()
 }
