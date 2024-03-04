@@ -34,6 +34,17 @@ function coordinatesToId(xc, yc) {
     return xc.toString() + 'x' + yc.toString();
 }
 
+function removeOnlickcs() {
+    document.onclick = null;
+    for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
+        for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+            let tile = document.getElementById(coordinatesToId(xc, yc));
+            tile.onclick = null;
+            tile.querySelector(".dot").style.display = "none";
+        }
+    }
+}
+
 class ChessPiece {
     constructor(piece) {
         this.piece = piece;
@@ -72,6 +83,10 @@ class ChessPiece {
             default:
                 return EMPTY;
         }
+    }
+
+    getPiece() {
+        return this.piece;
     }
 
     isBlack() {
@@ -132,13 +147,11 @@ function coordinatesToPieceInit(xc, yc) {
 
 class BoardTile {
     constructor(xc, yc) {
-        this.piece = new ChessPiece(coordinatesToPieceInit(xc, yc));
         this.is_active = false;
         this.tile = document.getElementById(coordinatesToId(xc, yc));
-        if (!this.piece.isEmpty()) {
-            this.getPieceObj().src = this.piece.getURL();
-            this.getPieceObj().style.display = "";
-        }
+        this.piece = new ChessPiece(EMPTY);
+        this.updatePiece(coordinatesToPieceInit(xc, yc));
+        this.coordinates = [xc, yc];
     }
 
     getDotObj() {
@@ -153,6 +166,21 @@ class BoardTile {
         return this.piece.getPieceType();
     }
 
+    getCoordinates() {
+        return this.coordinates;
+    }
+
+    updatePiece(piece) {
+        this.piece = new ChessPiece(piece);
+        if (!this.piece.isEmpty()) {
+            this.getPieceObj().src = this.piece.getURL();
+            this.getPieceObj().style.display = "";
+        } else {
+            this.src = "";
+            this.getPieceObj().style.display = "none";
+        }
+    }
+
     isEmpty() {
         return this.piece.isEmpty();
     }
@@ -165,9 +193,36 @@ class BoardTile {
         return this.piece.isBlack();
     }
 
-    //todo add onclick events
-    addOnlick(onclick_func) {
-        return;
+    showDot() {
+        this.getDotObj().style.display = "";
+    }
+
+    hideDot() {
+        this.getDotObj().style.display = "none";
+    }
+
+    addDottedOnlick(chb, possible_moves) {
+        let piece = this.piece.getPiece();
+        let coordinates = this.getCoordinates();
+        this.tile.addEventListener('click', function() {
+            removeOnlickcs();
+            for (let i = 0; i < possible_moves.length; i++) {
+                let xc = possible_moves[i][0];
+                let yc = possible_moves[i][1];
+                chb.Tiles[xc][yc].showDot();
+                chb.Tiles[xc][yc].pieceMoveOnlick(
+                    chb, piece, coordinates);
+            }
+        });
+    }
+
+    pieceMoveOnlick(chb, piece, prev_cords, this_cords) {
+        this_cords = this.getCoordinates();
+        this.tile.addEventListener('click', function() {
+            chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
+            chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+            chb.resetBoardOnclicks();
+        });
     }
 }
 
@@ -238,7 +293,7 @@ class ChessBoard {
     }
 
     isOutOfBoard(xc, yc) {
-        return xc < 1 || xc > 8 || yc < 1 || xc > 8;
+        return xc < 1 || xc > 8 || yc < 1 || yc > 8;
     }
 
     possibleMoves(xc, yc) {
@@ -256,36 +311,40 @@ class ChessBoard {
             case KING:
                 return this.possibleKingMoves(xc, yc);
             case EMPTY:
-                return;
+                return [];
         }
     }
 
     //todo add EnPassant and promotions
     possiblePawnMoves(xc, yc) {
         let yc_alignment = 1;
-        if (this.isBlack(xc, yc)) {
+        if (this.Tiles[xc][yc].isBlack()) {
             yc_alignment = -1;
         }
 
         let possible_moves = [];
         if (this.Tiles[xc][yc+yc_alignment].isEmpty()) {
-            possible_moves.append([xc, yc+yc_alignment]);
+            possible_moves.push([xc, yc+yc_alignment]);
         }
         if (!this.isOutOfBoard(xc-1, yc+yc_alignment) &&
-            !this.isSameColor(xc, yc, xc-1, yc_+yc_alignment)
+            !this.isSameColor(xc, yc, xc-1, yc+yc_alignment) &&
+            !this.Tiles[xc-1][yc+yc_alignment].isEmpty()
         ) {
-            possible_moves.append([xc-1, yc+yc_alignment]);
+            possible_moves.push([xc-1, yc+yc_alignment]);
         }
         if (!this.isOutOfBoard(xc+1, yc+yc_alignment) &&
-            !this.isSameColor(xc, yc, xc+1, yc_+yc_alignment)
+            !this.isSameColor(xc, yc, xc+1, yc+yc_alignment) &&
+            !this.Tiles[xc+1][yc+yc_alignment].isEmpty()
         ) {
-            possible_moves.append([xc+1, yc+yc_alignment]);
+            possible_moves.push([xc+1, yc+yc_alignment]);
         }
-        if ((this.isWhite() && yc == 2) || (this.isBlack() && yc == 7)) {
+        if ((this.Tiles[xc][yc].isWhite() && yc == 2) ||
+            (this.Tiles[xc][yc].isBlack() && yc == 7)
+        ) {
             if (this.Tiles[xc][yc+yc_alignment].isEmpty() &&
                 this.Tiles[xc][yc+2*yc_alignment].isEmpty()
             ) {
-                possible_moves.append([xc, yc+2*yc_alignment]);
+                possible_moves.push([xc, yc+2*yc_alignment]);
             }
         }
         return possible_moves;
@@ -305,13 +364,13 @@ class ChessBoard {
         let possible_moves = [];
         
         for (let i = 0; i < possible_jumps.length; i++) {
-            const new_xc = xc + possible_jumps[i][0];
-            const new_yc = yc + possible_jumps[i][1];
+            const new_xc = possible_jumps[i][0];
+            const new_yc = possible_jumps[i][1];
             if (!this.isOutOfBoard(new_xc, new_yc) &&
                 (this.Tiles[new_xc][new_yc].isEmpty() ||
                 !this.isSameColor(xc, yc, new_xc, new_yc))
             ) {
-                possible_moves.append([new_xc, new_yc]);
+                possible_moves.push([new_xc, new_yc]);
             }
         }
         return possible_moves;
@@ -319,21 +378,22 @@ class ChessBoard {
 
     pieceSlide(xc, yc, xc_alignment, yc_alignment) {
         let possible_moves = [];
-        let new_xc = xc - xc_alignment;
-        let new_yc = yc - yc_alignment;
+        let new_xc = xc + xc_alignment;
+        let new_yc = yc + yc_alignment;
         while (!this.isOutOfBoard(new_xc, new_yc)) {
-            is_same_color = this.isSameColor(xc, yc, new_xc, new_yc);
+            let is_same_color = this.isSameColor(xc, yc, new_xc, new_yc);
             if (is_same_color == null) {
-                possible_moves.append([new_xc, new_yc]);
+                possible_moves.push([new_xc, new_yc]);
             } else {
                 if (is_same_color == false) {
-                    possible_moves.append([new_xc, new_yc]);
+                    possible_moves.push([new_xc, new_yc]);
                 }
                 break;
             }
             new_xc += xc_alignment;
             new_yc += yc_alignment;
         }
+        return possible_moves;
     }
 
     possibleBishopMoves(xc, yc) {
@@ -394,11 +454,24 @@ class ChessBoard {
                 if (this.isSameColor(xc, yc, new_xc, new_yc)) {
                     continue;
                 }
-                possible_moves.append([new_xc, new_yc]);
+                possible_moves.push([new_xc, new_yc]);
             }
         }
         return possible_moves;
     }
+
+    resetBoardOnclicks() {
+        removeOnlickcs();
+
+        //? Set new onclick listeners
+        for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
+            for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                let possible_moves = this.possibleMoves(xc, yc);
+                this.Tiles[xc][yc].addDottedOnlick(this, possible_moves);
+            }
+        }
+    }
 }
 
 let chess_board = new ChessBoard();
+chess_board.resetBoardOnclicks();
