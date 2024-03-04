@@ -30,21 +30,51 @@ const CHESS_PIECE_URLS = JSON.parse(
 const CHESS_HEIGHT    = 8;
 const CHESS_WIDTH     = 8;
 
+const EVENT_MOVE    = 1;
+const EVENT_DOT     = 2;
+
+const WHITE_MOVE = 0;
+const BLACK_MOVE = 1;
+let CURRENT_MOVE = WHITE_MOVE;
+
+function switchMove() {
+    if (CURRENT_MOVE == WHITE_MOVE) {
+        CURRENT_MOVE = BLACK_MOVE;
+    } else {
+        CURRENT_MOVE = WHITE_MOVE;
+    }
+}
+
 function coordinatesToId(xc, yc) {
     return xc.toString() + 'x' + yc.toString();
 }
 
-let onclick_listeners = [];
-
-function removeOnlickcs() {
+function clearDots() {
     for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
         for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
             let tile = document.getElementById(coordinatesToId(xc, yc));
             tile.querySelector(".dot").style.display = "none";
         }
     }
+}
+
+let onclick_listeners = [];
+
+function removeMoveOnclicks() {
+    let new_onclicks = []
     for (const listener of onclick_listeners) {
-        listener();
+        if (listener.type == EVENT_MOVE) {
+            listener.func();
+        } else {
+            new_onclicks.push(listener);
+        }
+    }
+    onclick_listeners = new_onclicks;
+}
+
+function removeAllOnclickcs() {
+    for (const listener of onclick_listeners) {
+        listener.func();
     }
     onclick_listeners = [];
 }
@@ -151,7 +181,6 @@ function coordinatesToPieceInit(xc, yc) {
 
 class BoardTile {
     constructor(xc, yc) {
-        this.is_active = false;
         this.tile = document.getElementById(coordinatesToId(xc, yc));
         this.piece = new ChessPiece(EMPTY);
         this.updatePiece(coordinatesToPieceInit(xc, yc));
@@ -209,27 +238,31 @@ class BoardTile {
         this.getDotObj().style.display = "none";
     }
 
-    addDottedOnlick(chb, possible_moves) {
+    addDottedOnclick(chb, possible_moves) {
         //? Get objects for event function
         let piece = this.getPiece();
         let coordinates = this.getCoordinates();
 
         //? Create event function
         let event_func = function() {
-            removeOnlickcs();
+            clearDots();
+            removeMoveOnclicks();
             for (let i = 0; i < possible_moves.length; i++) {
                 let xc = possible_moves[i][0];
                 let yc = possible_moves[i][1];
                 chb.Tiles[xc][yc].showDot();
-                chb.Tiles[xc][yc].pieceMoveOnlick(
+                chb.Tiles[xc][yc].pieceMoveOnclick(
                     chb, piece, coordinates);
             }
         };
 
         //? Store event listener remover
         let node = this.tile;
-        onclick_listeners.push(function() {
-            node.removeEventListener('click', event_func);
+        onclick_listeners.push({
+            func: function() {
+                node.removeEventListener('click', event_func);
+            },
+            type: EVENT_DOT,
         });
 
         //? Add event listener
@@ -237,7 +270,7 @@ class BoardTile {
     }
 
     //todo add promotions
-    pieceMoveOnlick(chb, piece, prev_cords, this_cords) {
+    pieceMoveOnclick(chb, piece, prev_cords, this_cords) {
         //? Get objects for event function
         this_cords = this.getCoordinates();
 
@@ -245,13 +278,17 @@ class BoardTile {
         let event_func = function() {
             chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
             chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+            switchMove();
             chb.resetBoardOnclicks();
         };
 
         //? Store event listener remover
         let node = this.tile;
-        onclick_listeners.push(function() {
-            node.removeEventListener('click', event_func);
+        onclick_listeners.push({
+            func: function() {
+                node.removeEventListener('click', event_func);
+            },
+            type: EVENT_MOVE,
         });
 
         //? Add event listener
@@ -494,12 +531,19 @@ class ChessBoard {
     }
 
     resetBoardOnclicks() {
-        removeOnlickcs();
+        clearDots();
+        removeAllOnclickcs();
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
             for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                if (this.Tiles[xc][yc].isEmpty() ||
+                    (this.Tiles[xc][yc].isWhite() && CURRENT_MOVE == BLACK_MOVE) ||
+                    (this.Tiles[xc][yc].isBlack() && CURRENT_MOVE == WHITE_MOVE)
+                ) {
+                    continue;
+                }
                 let possible_moves = this.possibleMoves(xc, yc);
-                this.Tiles[xc][yc].addDottedOnlick(this, possible_moves);
+                this.Tiles[xc][yc].addDottedOnclick(this, possible_moves);
             }
         }
     }
@@ -507,3 +551,11 @@ class ChessBoard {
 
 let chess_board = new ChessBoard();
 chess_board.resetBoardOnclicks();
+document.addEventListener('click', function(event) {
+    if (!event.target.classList.contains("tile") &&
+        !event.target.classList.contains("piece") &&
+        !event.target.classList.contains("dot")
+    ) {
+        chess_board.resetBoardOnclicks();
+    }
+});
