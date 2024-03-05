@@ -45,6 +45,7 @@ const BLACK_MOVE = 1;
 //*******************
 
 let CURRENT_MOVE = WHITE_MOVE;
+let NUM_POSSIBLE_MOVES = 0;
 let onclick_listeners = [];
 
 //*******************
@@ -353,7 +354,7 @@ class BoardTile {
 
 class ChessBoard {
     constructor() {
-        const chb_instance = document.getElementById("chess_board");
+        const chb_instance = document.getElementById("chess-board");
         clearBoard(chb_instance);
         initTiles(chb_instance);
 
@@ -613,6 +614,7 @@ class ChessBoard {
     resetBoardOnclicks() {
         clearDots();
         removeAllOnclickcs();
+        NUM_POSSIBLE_MOVES = 0;
 
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
@@ -625,8 +627,21 @@ class ChessBoard {
                 }
                 let possible_moves = this.possibleMoves(xc, yc);
                 let legal_moves = this.legalMoves(xc, yc, possible_moves);
+                NUM_POSSIBLE_MOVES += legal_moves.length;
                 this.Tiles[xc][yc].addDottedOnclick(this, legal_moves);
             }
+        }
+
+        if (NUM_POSSIBLE_MOVES == 0) {
+            let who_won = "WHITE";
+            if (CURRENT_MOVE == WHITE_MOVE) {
+                who_won = "BLACK";
+            }
+
+            let checkmate_screen = document.getElementById("checkmate-screen");
+            checkmate_screen.style.display = "block";
+            let checkmate_message = document.getElementById("checkmate-message");
+            checkmate_message.innerHTML = who_won + " WINS!";
         }
     }
 }
@@ -637,11 +652,18 @@ class ChessBoard {
 
 let chess_board = new ChessBoard();
 chess_board.resetBoardOnclicks();
+
+//******************
+//* GLOBAL ONCLICKS
+//******************
+
 document.addEventListener('click', function(event) {
     if (!event.target.classList.contains("tile") &&
         !event.target.classList.contains("piece") &&
         !event.target.classList.contains("dot")
     ) {
         chess_board.resetBoardOnclicks();
+        document.getElementById("checkmate-screen").style.display = "none";
     }
 });
+

@@ -45,7 +45,7 @@
 			"			<img src=\"{{.linkeinURL}}\" alt=\"LinkedInIcon\">",
 			"			</a>",
 			"		</div>",
-			"		<div class=\"contents\">",
+			"		<div class=\"page-contents\">",
 			"			HTML content",
 			"		</div>",
 			"	</body>",

@@ -1,9 +1,19 @@
-.chess_board {
+.page-contents {
+    display: grid;
+    grid-template-columns: calc((90vw - 70vh) / 2) 70vh calc((90vw - 70vh) / 2);
+    grid-template-rows: auto auto;
+    height: auto;
+}
+
+/*? CHESS BOARD */
+
+.chess-board {
+    grid-column: 2;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     height: 70vh;
     width: 70vh;
-    margin: 10vh auto;
+    margin: auto;
 }
 
 .tile {
@@ -41,4 +51,43 @@
     height: 40%;
     width: 40%;
     margin: 30%;
+}
+
+.checkmate-screen {
+    display: none;
+    z-index: 5;
+    background-color: rgba(0, 0, 0, 0.25);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+.checkmate-message-window {
+    position: relative;
+    top: 25%;
+    left: 25%;
+    height: 50%;
+    width: 50%;
+    background-color: rgb(240, 240, 255);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*? NOTEPAD */
+.notepad-panel {
+
+}
+
+/*? MOVES */
+.moves-panel {
+
+}
+
+/*? BUTTONS */
+.buttons-panel {
+    
 }
