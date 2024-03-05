@@ -304,9 +304,7 @@ class BoardTile {
         let event_func = function() {
             clearDots();
             removeMoveOnclicks();
-            for (let i = 0; i < possible_moves.length; i++) {
-                let xc = possible_moves[i][0];
-                let yc = possible_moves[i][1];
+            for (const [xc, yc] of possible_moves) {
                 chb.Tiles[xc][yc].showDot();
                 chb.Tiles[xc][yc].pieceMoveOnclick(
                     chb, piece, coordinates);
@@ -449,9 +447,7 @@ class ChessBoard {
         ];
         let possible_moves = [];
         
-        for (let i = 0; i < possible_jumps.length; i++) {
-            const new_xc = possible_jumps[i][0];
-            const new_yc = possible_jumps[i][1];
+        for (const [new_xc, new_yc] of possible_jumps) {
             if (!this.isOutOfBoard(new_xc, new_yc) &&
                 (this.Tiles[new_xc][new_yc].isEmpty() ||
                 !this.isSameColor(xc, yc, new_xc, new_yc))
