@@ -34,9 +34,10 @@ const CHESS_PIECE_URLS = JSON.parse(
 const CHESS_HEIGHT    = 8;
 const CHESS_WIDTH     = 8;
 
-const EVENT_MOVE    = 1;
-const EVENT_DOT     = 2;
-const PROMOTION     = 3;
+const EVENT_MOVE        = 1;
+const EVENT_DOT         = 2;
+const PROMOTION         = 3;
+const HIDE_PROMOTIONS   = 4;
 
 const WHITE_MOVE = 0;
 const BLACK_MOVE = 1;
@@ -52,6 +53,10 @@ let onclick_listeners = [];
 //*******************
 //* GLOBAL FUNCTIONS
 //*******************
+
+function delay(miliseconds) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
+}
 
 function switchMove() {
     if (CURRENT_MOVE == WHITE_MOVE) {
@@ -191,6 +196,28 @@ function showWhitePromotion() {
 
 function hideWhitePromotion() {
     document.getElementById("white-promotion-screen").style.display = "none";
+}
+
+function addHidePromotionsOnclick(chb) {
+    let event_func = function(event) {
+        if (event.target.classList.contains("promotions") || event.target.classList.contains("tile")) {
+            return;
+        }
+        hideBlackPromotion();
+        hideWhitePromotion();
+        chb.resetBoardOnclicks();
+    }
+
+    let node = document;
+
+    onclick_listeners.push({
+        func: function() {
+            node.removeEventListener('click', event_func);
+        },
+        type: HIDE_PROMOTIONS,
+    });
+
+    node.addEventListener('click', event_func);
 }
 
 function piecePromotion(chb, prev_cords, this_cords, piece) {
@@ -422,9 +449,15 @@ class BoardTile {
             if (piece == WHITE_PAWN && this_cords[1] == 8) {
                 showWhitePromotion();
                 addWhitePromotionOnclicks(chb, prev_cords, this_cords);
+                setTimeout(() => {
+                    addHidePromotionsOnclick(chb);
+                }, 10);
             } else if (piece == BLACK_PAWN && this_cords[1] == 1) {
                 showBlackPromotion();
                 addBlackPromotionOnclicks(chb, prev_cords, this_cords);
+                setTimeout(() => {
+                     addHidePromotionsOnclick(chb);
+                 }, 10);
             } else {
                 chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
                 chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
@@ -784,7 +817,9 @@ chess_board.resetBoardOnclicks();
 document.addEventListener('click', function(event) {
     if (!event.target.classList.contains("tile") &&
         !event.target.classList.contains("piece") &&
-        !event.target.classList.contains("dot")
+        !event.target.classList.contains("dot") &&
+        !event.target.classList.contains("promotions") &&
+        !event.target.classList.contains("promotion-screen")
     ) {
         chess_board.resetBoardOnclicks();
         document.getElementById("checkmate-screen").style.display = "none";
