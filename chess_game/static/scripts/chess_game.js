@@ -542,9 +542,78 @@ class ChessBoard {
         return possible_moves;
     }
 
+    getKingPosition(color) {
+        let king_piece = BLACK_KING;
+        if (color == WHITE) {
+            king_piece = WHITE_KING;
+        }
+
+        for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
+            for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                if (this.Tiles[xc][yc].getPiece() == king_piece) {
+                    return [xc, yc];
+                }
+            }
+        }
+    }
+
+    isKingInCheck(color) {
+        const king_coords = this.getKingPosition(color);
+        for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
+            for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                if (this.Tiles[xc][yc].isEmpty() ||
+                    (this.Tiles[xc][yc].isWhite() && CURRENT_MOVE == BLACK_MOVE) ||
+                    (this.Tiles[xc][yc].isBlack() && CURRENT_MOVE == WHITE_MOVE)
+                ) {
+                    continue;
+                }
+                let possible_moves = this.possibleMoves(xc, yc);
+                if (possible_moves.some(([x, y]) => x === king_coords[0] && y === king_coords[1])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    isMoveLegal(xc, yc, new_xc, new_yc) {
+        let src_piece = this.Tiles[xc][yc].getPiece();
+        let dest_piece = this.Tiles[new_xc][new_yc].getPiece();
+        let king_color = WHITE;
+        if (CURRENT_MOVE == BLACK_MOVE) {
+            king_color = BLACK;
+        }
+
+        //? Mock the move
+        switchMove();
+        this.Tiles[xc][yc].piece = new ChessPiece(EMPTY);
+        this.Tiles[new_xc][new_yc].piece = new ChessPiece(src_piece);
+
+        //? Check if the move was legal
+        let is_legal = !this.isKingInCheck(king_color, (xc == 4 && yc == 7));
+
+        //? Undo mocked move
+        switchMove();
+        this.Tiles[xc][yc].piece = new ChessPiece(src_piece);
+        this.Tiles[new_xc][new_yc].piece = new ChessPiece(dest_piece);
+
+        return is_legal;
+    }
+
+    legalMoves(xc, yc, possible_moves) {
+        let legal_moves = [];
+        for (const [new_xc, new_yc] of possible_moves) {
+            if (this.isMoveLegal(xc, yc, new_xc, new_yc)) {
+                legal_moves.push([new_xc, new_yc])
+            }
+        }
+        return legal_moves;
+    }
+
     resetBoardOnclicks() {
         clearDots();
         removeAllOnclickcs();
+
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
             for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
@@ -555,7 +624,8 @@ class ChessBoard {
                     continue;
                 }
                 let possible_moves = this.possibleMoves(xc, yc);
-                this.Tiles[xc][yc].addDottedOnclick(this, possible_moves);
+                let legal_moves = this.legalMoves(xc, yc, possible_moves);
+                this.Tiles[xc][yc].addDottedOnclick(this, legal_moves);
             }
         }
     }
