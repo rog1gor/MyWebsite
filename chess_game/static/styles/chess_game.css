@@ -121,6 +121,7 @@
 
 /*? MOVES */
 .moves-panel {
+    display: none;
     position: relative;
     height: 70vh;
     grid-column: 3;

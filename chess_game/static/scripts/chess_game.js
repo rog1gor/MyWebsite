@@ -42,6 +42,10 @@ const HIDE_PROMOTIONS   = 4;
 const WHITE_MOVE = 0;
 const BLACK_MOVE = 1;
 
+const HIGHLIGHT_COLOR = "salmon";
+const WHITE_TILE = "lightgoldenrodyellow";
+const BLACK_TILE = "burlywood";
+
 //*******************
 //* GLOBAL VARIABLES
 //*******************
@@ -223,6 +227,7 @@ function addHidePromotionsOnclick(chb) {
 function piecePromotion(chb, prev_cords, this_cords, piece) {
     chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
     chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+    chb.setLastMove(prev_cords, this_cords);
     switchMove();
     chb.resetBoardOnclicks();
 }
@@ -347,6 +352,18 @@ class BoardTile {
         this.is_rotated = false;
     }
 
+    highlight() {
+        this.tile.style.backgroundColor = HIGHLIGHT_COLOR;
+    }
+
+    resetColor() {
+        if ((this.coordinates[0] + this.coordinates[1]) % 2 == 0) {
+            this.tile.style.backgroundColor = BLACK_TILE;
+        } else {
+            this.tile.style.backgroundColor = WHITE_TILE;
+        }
+    }
+
     getDotObj() {
         return this.tile.querySelector(".dot");
     }
@@ -461,6 +478,7 @@ class BoardTile {
             } else {
                 chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
                 chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+                chb.setLastMove(prev_cords, this_cords);
                 switchMove();
                 chb.resetBoardOnclicks();
             }
@@ -497,7 +515,19 @@ class ChessBoard {
             }
         }
 
-        this.move_list = [];
+        this.last_move = null;
+    }
+
+    setLastMove(prev_cords, new_cords) {
+        this.last_move = [
+            [prev_cords[0], prev_cords[1]],
+            [new_cords[0], new_cords[1]]
+        ];
+    }
+
+    highlightLastMove() {
+        this.Tiles[this.last_move[0][0]][this.last_move[0][1]].highlight();
+        this.Tiles[this.last_move[1][0]][this.last_move[1][1]].highlight();
     }
 
     isSameColor(xa, ya, xb, yb) {
@@ -758,6 +788,7 @@ class ChessBoard {
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
             for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                this.Tiles[xc][yc].resetColor();
                 if (this.Tiles[xc][yc].isEmpty() ||
                     (this.Tiles[xc][yc].isWhite() && CURRENT_MOVE == BLACK_MOVE) ||
                     (this.Tiles[xc][yc].isBlack() && CURRENT_MOVE == WHITE_MOVE)
@@ -769,6 +800,10 @@ class ChessBoard {
                 NUM_LEGAL_MOVES += legal_moves.length;
                 this.Tiles[xc][yc].addDottedOnclick(this, legal_moves);
             }
+        }
+
+        if (this.last_move != null) {
+            this.highlightLastMove();
         }
 
         if (NUM_LEGAL_MOVES == 0) {
