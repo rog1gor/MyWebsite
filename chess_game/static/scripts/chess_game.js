@@ -692,3 +692,12 @@ document.addEventListener('click', function(event) {
 
 document.getElementById("rotation").addEventListener(
     'click', function() { chess_board.rotateBoard(); });
+
+    document.getElementById("new-game").addEventListener(
+        'click', function() {
+            chess_board = new ChessBoard()
+            chess_board.resetBoardOnclicks();
+            CURRENT_MOVE = WHITE;
+            NUM_POSSIBLE_MOVES = 0;
+            onclick_listeners = [];
+        });
