@@ -1,3 +1,7 @@
+//************
+//* CONSTANTS 
+//************
+
 const EMPTY = -1
 
 const PAWN      = 0;
@@ -35,7 +39,17 @@ const EVENT_DOT     = 2;
 
 const WHITE_MOVE = 0;
 const BLACK_MOVE = 1;
+
+//*******************
+//* GLOBAL VARIABLES
+//*******************
+
 let CURRENT_MOVE = WHITE_MOVE;
+let onclick_listeners = [];
+
+//*******************
+//* GLOBAL FUNCTIONS
+//*******************
 
 function switchMove() {
     if (CURRENT_MOVE == WHITE_MOVE) {
@@ -49,6 +63,49 @@ function coordinatesToId(xc, yc) {
     return xc.toString() + 'x' + yc.toString();
 }
 
+function coordinatesToPieceInit(xc, yc) {
+    switch (yc) {
+        case 1:
+            switch (xc) {
+                case 1:
+                case 8:
+                    return WHITE_ROOK;
+                case 2:
+                case 7:
+                    return WHITE_KNIGHT;
+                case 3:
+                case 6:
+                    return WHITE_BISHOP;
+                case 4:
+                    return WHITE_QUEEN;
+                case 5:
+                    return WHITE_KING;
+            }
+        case 2:
+            return WHITE_PAWN;
+        case 7:
+            return BLACK_PAWN;
+        case 8:
+            switch (xc) {
+                case 1:
+                case 8:
+                    return BLACK_ROOK;
+                case 2:
+                case 7:
+                    return BLACK_KNIGHT;
+                case 3:
+                case 6:
+                    return BLACK_BISHOP;
+                case 4:
+                    return BLACK_QUEEN;
+                case 5:
+                    return BLACK_KING;
+            }
+        default:
+            return EMPTY;
+    }
+}
+
 function clearDots() {
     for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
         for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
@@ -57,8 +114,6 @@ function clearDots() {
         }
     }
 }
-
-let onclick_listeners = [];
 
 function removeMoveOnclicks() {
     let new_onclicks = []
@@ -78,6 +133,51 @@ function removeAllOnclickcs() {
     }
     onclick_listeners = [];
 }
+
+function clearBoard(chb_instance) {
+    let chb_children = chb_instance.children;
+    for (let i = chb_children.length - 1; i >= 0; i--) {
+        if (chb_children[i].classList.contains("tile")) {
+            chb_instance.removeChild(chb_children[i]);
+        }
+    }
+}
+
+function initTiles(chb_instance) {
+    for (let i = 1; i <= CHESS_HEIGHT; i++) {
+        for (let j = 1; j <= CHESS_WIDTH; j++) {
+            //? Create newPiece
+            let newPiece = document.createElement("img");
+            newPiece.classList.add("piece");
+            newPiece.style.display = "none";
+
+            //? Create possible move dot
+            let newDot = document.createElement("div");
+            newDot.classList.add("dot");
+            newDot.style.display = "none";
+
+            //? Create a tile
+            let newTile = document.createElement("div");
+            newTile.classList.add("tile");
+            if ((i + j) % 2 == 1) {
+                newTile.classList.add("black");
+            } else {
+                newTile.classList.add("white");
+            }
+            newTile.id = coordinatesToId(j, CHESS_HEIGHT - i + 1);
+            newTile.style.gridRow = i.toString();
+            newTile.style.gridColumn = j.toString();
+            newTile.appendChild(newDot);
+            newTile.appendChild(newPiece);
+
+            chb_instance.appendChild(newTile);
+        }
+    }
+}
+
+//****************
+//* CHESS OBJECTS
+//****************
 
 class ChessPiece {
     constructor(piece) {
@@ -133,49 +233,6 @@ class ChessPiece {
 
     isEmpty() {
         return this.piece == EMPTY;
-    }
-}
-
-function coordinatesToPieceInit(xc, yc) {
-    switch (yc) {
-        case 1:
-            switch (xc) {
-                case 1:
-                case 8:
-                    return WHITE_ROOK;
-                case 2:
-                case 7:
-                    return WHITE_KNIGHT;
-                case 3:
-                case 6:
-                    return WHITE_BISHOP;
-                case 4:
-                    return WHITE_QUEEN;
-                case 5:
-                    return WHITE_KING;
-            }
-        case 2:
-            return WHITE_PAWN;
-        case 7:
-            return BLACK_PAWN;
-        case 8:
-            switch (xc) {
-                case 1:
-                case 8:
-                    return BLACK_ROOK;
-                case 2:
-                case 7:
-                    return BLACK_KNIGHT;
-                case 3:
-                case 6:
-                    return BLACK_BISHOP;
-                case 4:
-                    return BLACK_QUEEN;
-                case 5:
-                    return BLACK_KING;
-            }
-        default:
-            return EMPTY;
     }
 }
 
@@ -293,47 +350,6 @@ class BoardTile {
 
         //? Add event listener
         this.tile.addEventListener('click', event_func);
-    }
-}
-
-function clearBoard(chb_instance) {
-    let chb_children = chb_instance.children;
-    for (let i = chb_children.length - 1; i >= 0; i--) {
-        if (chb_children[i].classList.contains("tile")) {
-            chb_instance.removeChild(chb_children[i]);
-        }
-    }
-}
-
-function initTiles(chb_instance) {
-    for (let i = 1; i <= CHESS_HEIGHT; i++) {
-        for (let j = 1; j <= CHESS_WIDTH; j++) {
-            //? Create newPiece
-            let newPiece = document.createElement("img");
-            newPiece.classList.add("piece");
-            newPiece.style.display = "none";
-
-            //? Create possible move dot
-            let newDot = document.createElement("div");
-            newDot.classList.add("dot");
-            newDot.style.display = "none";
-
-            //? Create a tile
-            let newTile = document.createElement("div");
-            newTile.classList.add("tile");
-            if ((i + j) % 2 == 1) {
-                newTile.classList.add("black");
-            } else {
-                newTile.classList.add("white");
-            }
-            newTile.id = coordinatesToId(j, CHESS_HEIGHT - i + 1);
-            newTile.style.gridRow = i.toString();
-            newTile.style.gridColumn = j.toString();
-            newTile.appendChild(newDot);
-            newTile.appendChild(newPiece);
-
-            chb_instance.appendChild(newTile);
-        }
     }
 }
 
@@ -548,6 +564,10 @@ class ChessBoard {
         }
     }
 }
+
+//**********************
+//* GAME INITIALIZATION
+//**********************
 
 let chess_board = new ChessBoard();
 chess_board.resetBoardOnclicks();
