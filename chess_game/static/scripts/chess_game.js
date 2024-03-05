@@ -45,7 +45,7 @@ const BLACK_MOVE = 1;
 //*******************
 
 let CURRENT_MOVE = WHITE_MOVE;
-let NUM_POSSIBLE_MOVES = 0;
+let NUM_LEGAL_MOVES = 0;
 let onclick_listeners = [];
 
 //*******************
@@ -310,7 +310,7 @@ class BoardTile {
         }
     }
 
-    addDottedOnclick(chb, possible_moves) {
+    addDottedOnclick(chb, legal_moves) {
         //? Get objects for event function
         let piece = this.getPiece();
         let coordinates = this.getCoordinates();
@@ -319,7 +319,7 @@ class BoardTile {
         let event_func = function() {
             clearDots();
             removeMoveOnclicks();
-            for (const [xc, yc] of possible_moves) {
+            for (const [xc, yc] of legal_moves) {
                 chb.Tiles[xc][yc].showDot();
                 chb.Tiles[xc][yc].pieceMoveOnclick(
                     chb, piece, coordinates);
@@ -382,6 +382,8 @@ class ChessBoard {
                 this.Tiles[xc][yc] = new BoardTile(xc, yc);
             }
         }
+
+        this.move_list = [];
     }
 
     isSameColor(xa, ya, xb, yb) {
@@ -637,7 +639,7 @@ class ChessBoard {
     resetBoardOnclicks() {
         clearDots();
         removeAllOnclickcs();
-        NUM_POSSIBLE_MOVES = 0;
+        NUM_LEGAL_MOVES = 0;
 
         //? Set new onclick listeners
         for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
@@ -650,12 +652,12 @@ class ChessBoard {
                 }
                 let possible_moves = this.possibleMoves(xc, yc);
                 let legal_moves = this.legalMoves(xc, yc, possible_moves);
-                NUM_POSSIBLE_MOVES += legal_moves.length;
+                NUM_LEGAL_MOVES += legal_moves.length;
                 this.Tiles[xc][yc].addDottedOnclick(this, legal_moves);
             }
         }
 
-        if (NUM_POSSIBLE_MOVES == 0) {
+        if (NUM_LEGAL_MOVES == 0) {
             let who_won = "WHITE";
             if (CURRENT_MOVE == WHITE_MOVE) {
                 who_won = "BLACK";
@@ -698,6 +700,6 @@ document.getElementById("rotation").addEventListener(
             chess_board = new ChessBoard()
             chess_board.resetBoardOnclicks();
             CURRENT_MOVE = WHITE;
-            NUM_POSSIBLE_MOVES = 0;
+            NUM_LEGAL_MOVES = 0;
             onclick_listeners = [];
         });
