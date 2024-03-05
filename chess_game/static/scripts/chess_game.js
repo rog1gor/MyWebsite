@@ -476,6 +476,17 @@ class BoardTile {
                      addHidePromotionsOnclick(chb);
                  }, 10);
             } else {
+                //? Check if EnPassant
+                if (chb.Tiles[prev_cords[0]][prev_cords[1]].getPieceType() == PAWN &&
+                    chb.Tiles[this_cords[0]][this_cords[1]].isEmpty() &&
+                    prev_cords[0] != this_cords[0]
+                ) {
+                    if (chb.Tiles[prev_cords[0]][prev_cords[1]].isBlack()) {
+                        chb.Tiles[this_cords[0]][this_cords[1]+1].updatePiece(EMPTY);
+                    } else {
+                        chb.Tiles[this_cords[0]][this_cords[1]-1].updatePiece(EMPTY);
+                    }
+                }
                 chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
                 chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
                 chb.setLastMove(prev_cords, this_cords);
@@ -560,7 +571,6 @@ class ChessBoard {
         }
     }
 
-    //todo add EnPassant
     possiblePawnMoves(xc, yc) {
         let yc_alignment = 1;
         if (this.Tiles[xc][yc].isBlack()) {
@@ -592,6 +602,28 @@ class ChessBoard {
                 possible_moves.push([xc, yc+2*yc_alignment]);
             }
         }
+
+        //? EnPassant
+        if (!this.isOutOfBoard(xc-1, yc+yc_alignment) &&
+            this.Tiles[xc-1][yc+yc_alignment].isEmpty() &&
+            ((yc == 5 && this.Tiles[xc][yc].isWhite()) || (yc == 4 && this.Tiles[xc][yc].isBlack())) &&
+            this.last_move[0][0] == xc-1 && this.last_move[0][1] == yc + 2*yc_alignment &&
+            this.last_move[1][0] == xc-1 && this.last_move[1][1] == yc &&
+            this.Tiles[xc-1][yc].getPieceType() == PAWN
+        ) {
+            possible_moves.push([xc-1, yc+yc_alignment]);
+        }
+
+        if (!this.isOutOfBoard(xc+1, yc+yc_alignment) &&
+            this.Tiles[xc+1][yc+yc_alignment].isEmpty() &&
+            ((yc == 5 && this.Tiles[xc][yc].isWhite()) || (yc == 4 && this.Tiles[xc][yc].isBlack())) &&
+            this.last_move[0][0] == xc+1 && this.last_move[0][1] == yc + 2*yc_alignment &&
+            this.last_move[1][0] == xc+1 && this.last_move[1][1] == yc &&
+            this.Tiles[xc+1][yc].getPieceType() == PAWN
+        ) {
+            possible_moves.push([xc+1, yc+yc_alignment]);
+        }
+
         return possible_moves;
     }
 
@@ -740,15 +772,37 @@ class ChessBoard {
     isMoveLegal(xc, yc, new_xc, new_yc) {
         let src_piece = this.Tiles[xc][yc].getPiece();
         let dest_piece = this.Tiles[new_xc][new_yc].getPiece();
+        let EnPassant_piece = null;
         let king_color = WHITE;
         if (CURRENT_MOVE == BLACK_MOVE) {
             king_color = BLACK;
+        }
+
+        let is_EnPassant = this.Tiles[xc][yc].getPieceType() == PAWN &&
+            this.Tiles[new_xc][yc].getPieceType() == PAWN && (
+                (
+                    this.Tiles[xc][yc].isWhite() &&
+                    yc == 5 &&
+                    this.last_move[0][0] == new_xc && this.last_move[0][1] == 7 &&
+                    this.last_move[1][0] == new_xc && this.last_move[1][1] == 5
+                ) || (
+                    this.Tiles[xc][yc].isBlack() &&
+                    yc == 4 &&
+                    this.last_move[0][0] == new_xc && this.last_move[0][1] == 2 &&
+                    this.last_move[1][0] == new_xc && this.last_move[1][1] == 4
+                )
+            );
+        if (is_EnPassant) {
+            EnPassant_piece = this.Tiles[new_xc][yc].getPiece();
         }
 
         //? Mock the move
         switchMove();
         this.Tiles[xc][yc].piece = new ChessPiece(EMPTY);
         this.Tiles[new_xc][new_yc].piece = new ChessPiece(src_piece);
+        if (is_EnPassant) {
+            this.Tiles[new_xc][yc].piece = new ChessPiece(EMPTY);
+        }
 
         //? Check if the move was legal
         let is_legal = !this.isKingInCheck(king_color, (xc == 4 && yc == 7));
@@ -757,6 +811,9 @@ class ChessBoard {
         switchMove();
         this.Tiles[xc][yc].piece = new ChessPiece(src_piece);
         this.Tiles[new_xc][new_yc].piece = new ChessPiece(dest_piece);
+        if (is_EnPassant) {
+            this.Tiles[new_xc][yc].piece = new ChessPiece(EnPassant_piece);
+        }
 
         return is_legal;
     }
