@@ -243,6 +243,7 @@ class BoardTile {
         this.piece = new ChessPiece(EMPTY);
         this.updatePiece(coordinatesToPieceInit(xc, yc));
         this.coordinates = [xc, yc];
+        this.is_rotated = false;
     }
 
     getDotObj() {
@@ -294,6 +295,19 @@ class BoardTile {
 
     hideDot() {
         this.getDotObj().style.display = "none";
+    }
+
+    rotateTile() {
+        let id_xc = this.tile.id[0];
+        let id_yc = this.tile.id[2];
+        this.tile = this.tile = document.getElementById(coordinatesToId(9-id_xc, 9-id_yc));
+        if (!this.piece.isEmpty()) {
+            this.getPieceObj().src = this.piece.getURL();
+            this.getPieceObj().style.display = "";
+        } else {
+            this.src = "";
+            this.getPieceObj().style.display = "none";
+        }
     }
 
     addDottedOnclick(chb, possible_moves) {
@@ -611,6 +625,15 @@ class ChessBoard {
         return legal_moves;
     }
 
+    rotateBoard() {
+        for (let xc = 1; xc <= CHESS_WIDTH; xc++) {
+            for (let yc = 1; yc <= CHESS_HEIGHT; yc++) {
+                this.Tiles[xc][yc].rotateTile();
+            }
+        }
+        this.resetBoardOnclicks();
+    }
+
     resetBoardOnclicks() {
         clearDots();
         removeAllOnclickcs();
@@ -667,3 +690,5 @@ document.addEventListener('click', function(event) {
     }
 });
 
+document.getElementById("rotation").addEventListener(
+    'click', function() { chess_board.rotateBoard(); });
