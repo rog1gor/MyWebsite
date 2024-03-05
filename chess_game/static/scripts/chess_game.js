@@ -36,6 +36,7 @@ const CHESS_WIDTH     = 8;
 
 const EVENT_MOVE    = 1;
 const EVENT_DOT     = 2;
+const PROMOTION     = 3;
 
 const WHITE_MOVE = 0;
 const BLACK_MOVE = 1;
@@ -174,6 +175,79 @@ function initTiles(chb_instance) {
             chb_instance.appendChild(newTile);
         }
     }
+}
+
+function showBlackPromotion() {
+    document.getElementById("black-promotion-screen").style.display = "block";
+}
+
+function hideBlackPromotion() {
+    document.getElementById("black-promotion-screen").style.display = "none";    
+} 
+
+function showWhitePromotion() {
+    document.getElementById("white-promotion-screen").style.display = "block";
+}
+
+function hideWhitePromotion() {
+    document.getElementById("white-promotion-screen").style.display = "none";
+}
+
+function piecePromotion(chb, prev_cords, this_cords, piece) {
+    chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
+    chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+    switchMove();
+    chb.resetBoardOnclicks();
+}
+
+function addPiecePromotionListener(chb, prev_cords, this_cords, node, piece) {
+    //? Create event function
+    let event_func = function() {
+        hideBlackPromotion();
+        hideWhitePromotion();
+        piecePromotion(chb, prev_cords, this_cords, piece);
+    }
+
+    //? Store event remover
+    onclick_listeners.push({
+        func: function() {
+            node.removeEventListener('click', event_func);
+        },
+        type: PROMOTION,
+    });
+
+    //? Add event listener
+    node.addEventListener('click', event_func);
+}
+
+function addBlackPromotionOnclicks(chb, prev_cords, this_cords) {
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("black-knight-promotion-img"), BLACK_KNIGHT);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("black-bishop-promotion-img"), BLACK_BISHOP);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("black-rook-promotion-img"), BLACK_ROOK);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("black-queen-promotion-img"), BLACK_QUEEN);
+}
+
+function addWhitePromotionOnclicks(chb, prev_cords, this_cords) {
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("white-knight-promotion-img"), WHITE_KNIGHT);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("white-bishop-promotion-img"), WHITE_BISHOP);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("white-rook-promotion-img"), WHITE_ROOK);
+    addPiecePromotionListener(
+        chb, prev_cords, this_cords,
+        document.getElementById("white-queen-promotion-img"), WHITE_QUEEN);
 }
 
 //****************
@@ -339,17 +413,24 @@ class BoardTile {
         this.tile.addEventListener('click', event_func);
     }
 
-    //todo add promotions
     pieceMoveOnclick(chb, piece, prev_cords, this_cords) {
         //? Get objects for event function
         this_cords = this.getCoordinates();
 
         //? Create event function
         let event_func = function() {
-            chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
-            chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
-            switchMove();
-            chb.resetBoardOnclicks();
+            if (piece == WHITE_PAWN && this_cords[1] == 8) {
+                showWhitePromotion();
+                addWhitePromotionOnclicks(chb, prev_cords, this_cords);
+            } else if (piece == BLACK_PAWN && this_cords[1] == 1) {
+                showBlackPromotion();
+                addBlackPromotionOnclicks(chb, prev_cords, this_cords);
+            } else {
+                chb.Tiles[this_cords[0]][this_cords[1]].updatePiece(piece);
+                chb.Tiles[prev_cords[0]][prev_cords[1]].updatePiece(EMPTY);
+                switchMove();
+                chb.resetBoardOnclicks();
+            }
         };
 
         //? Store event listener remover
@@ -675,6 +756,24 @@ class ChessBoard {
 //* GAME INITIALIZATION
 //**********************
 
+document.getElementById(
+    "white-knight-promotion-img").src = CHESS_PIECE_URLS[WHITE_KNIGHT];
+document.getElementById(
+    "white-bishop-promotion-img").src = CHESS_PIECE_URLS[WHITE_BISHOP];
+document.getElementById(
+    "white-rook-promotion-img").src = CHESS_PIECE_URLS[WHITE_ROOK];
+document.getElementById(
+    "white-queen-promotion-img").src = CHESS_PIECE_URLS[WHITE_QUEEN];
+
+document.getElementById(
+    "black-knight-promotion-img").src = CHESS_PIECE_URLS[BLACK_KNIGHT];
+document.getElementById(
+    "black-bishop-promotion-img").src = CHESS_PIECE_URLS[BLACK_BISHOP];
+document.getElementById(
+    "black-rook-promotion-img").src = CHESS_PIECE_URLS[BLACK_ROOK];
+document.getElementById(
+    "black-queen-promotion-img").src = CHESS_PIECE_URLS[BLACK_QUEEN];
+
 let chess_board = new ChessBoard();
 chess_board.resetBoardOnclicks();
 
@@ -695,11 +794,11 @@ document.addEventListener('click', function(event) {
 document.getElementById("rotation").addEventListener(
     'click', function() { chess_board.rotateBoard(); });
 
-    document.getElementById("new-game").addEventListener(
-        'click', function() {
-            chess_board = new ChessBoard()
-            chess_board.resetBoardOnclicks();
-            CURRENT_MOVE = WHITE;
-            NUM_LEGAL_MOVES = 0;
-            onclick_listeners = [];
-        });
+document.getElementById("new-game").addEventListener(
+    'click', function() {
+        chess_board = new ChessBoard()
+        chess_board.resetBoardOnclicks();
+        CURRENT_MOVE = WHITE;
+        NUM_LEGAL_MOVES = 0;
+        onclick_listeners = [];
+    });

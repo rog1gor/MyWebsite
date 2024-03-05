@@ -103,7 +103,7 @@ BODY {
 
     background-color: var(--menu-bar-color);
     box-shadow: var(--shadow);
-    z-index: 1;
+    z-index: 10;
 }
 
 .nav-dropcontent a {
