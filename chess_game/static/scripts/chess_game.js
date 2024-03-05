@@ -802,7 +802,7 @@ class ChessBoard {
             }
         }
 
-        if (this.last_move != null) {
+        if (this.last_move != null && document.getElementById("do-highlight").checked == true) {
             this.highlightLastMove();
         }
 
