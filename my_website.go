@@ -26,6 +26,7 @@ func homepageHandler(context *gin.Context) {
 func main() {
 	router := gin.Default()
 
+	//? Remember to add all html templates when creating a new app
 	router.LoadHTMLFiles(
 		"static/templates/homepage.html",
 		Anime.HTML,
@@ -36,11 +37,14 @@ func main() {
 	router.Static("/images", "static/images")
 	router.Static("/styles", "static/styles")
 
+	//? Remember to load static files when creating a new app
 	Anime.LoadAppStaticFiles(router)
 	Chess.LoadAppStaticFiles(router)
 	Flashcards.LoadAppStaticFiles(router)
 	Recipies.LoadAppStaticFiles(router)
 
+	//? Basic GET handlers
+	//? Remember to add your handler when creating a new app
 	router.GET("/homepage", homepageHandler)
 	router.GET("/Anime", Anime.AppHandler)
 	router.GET("/Chess", Chess.AppHandler)
@@ -49,5 +53,8 @@ func main() {
 	router.GET("/", func(c *gin.Context) {
 		c.Redirect(http.StatusOK, "/homepage")
 	})
+
+	//? Unusuall handlers
+
 	router.Run()
 }
