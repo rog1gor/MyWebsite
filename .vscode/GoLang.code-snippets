@@ -6,7 +6,6 @@
 			"package ${0}",
 			"",
 			"import (",
-			"	\"log\"",
 			"	\"net/http\"",
 			"	\"website/global\"",
 			"",

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta CHARSET="utf-8">
+        <title>Flashcards</title>
+        <link rel="stylesheet" href="{{ .superStyle }}">
+        <link rel="stylesheet" href="{{ .thisStyle }}">
+        <link rel="shortcut icon" href="{{ .faviconURL }}" type="image/png">
+    </head>
+    <body class="light">
+        <div class="nav-bar">
+            <form action="/homepage" method="GET">
+                <input type="submit" value="Home">
+            </form>
+            <div class="nav-dropdown">
+                <button class="nav-dropbtn">Projects</button>
+                <div class="nav-dropcontent">
+                    {{range .projects}}
+                    <form action="/{{.}}" method="GET">
+                        <input type="submit" value="{{.}}">
+                    </form>
+                    {{end}}
+                </div>
+            </div>
+            <div class="nav-dropdown">
+                <button class="nav-dropbtn">Hobbies</button>
+                <div class="nav-dropcontent">
+                    {{range .hobbies}}
+                    <form action="/{{.}}" method="GET">
+                        <input type="submit" value="{{.}}">
+                    </form>
+                    {{end}}
+                </div>
+            </div>
+            <a class="social" href="https://github.com/rog1gor/">
+            <img src="{{.githubURL}}" alt="GitHubIcon">
+            </a>
+            <a class="social" href="https://www.linkedin.com/in/igorkaminski/">
+            <img src="{{.linkeinURL}}" alt="LinkedInIcon">
+            </a>
+        </div>
+        <div class="page-contents">
+            Flashcards
+        </div>
+    </body>
+</html>
