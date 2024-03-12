@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"website/chess_game"
+	"website/apps/Chess"
 	"website/global"
 
 	"github.com/gin-gonic/gin"
@@ -25,14 +25,14 @@ func main() {
 
 	router.LoadHTMLFiles(
 		"static/templates/homepage.html",
-		chess_game.HTML,
+		Chess.HTML,
 	)
 	router.Static("/images", "static/images")
 	router.Static("/styles", "static/styles")
 
-	chess_game.LoadChessGameStaticFiles(router)
+	Chess.LoadAppStaticFiles(router)
 
 	router.GET("/homepage", homepageHandler)
-	router.GET("/Chess", chess_game.ChessGameHandler)
+	router.GET("/Chess", Chess.AppHandler)
 	router.Run()
 }

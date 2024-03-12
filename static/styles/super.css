@@ -64,7 +64,7 @@ button, input[type="submit"], input[type="reset"] {
     box-shadow: var(--shadow);
 }
 
-.nav-bar a, .nav-bar form {
+.nav-bar a, .nav-bar form, .nav-bar input {
     float: left;
 
     color: var(--menu-font-color);
@@ -72,6 +72,10 @@ button, input[type="submit"], input[type="reset"] {
     text-decoration: none;
 
     padding: var(--menu-padding);
+}
+
+.nav-bar form {
+    padding: 0;
 }
 
 .nav-bar .social {
@@ -117,13 +121,22 @@ button, input[type="submit"], input[type="reset"] {
     z-index: 10;
 }
 
-.nav-dropcontent a, .nav-dropcontent form {
+.nav-dropcontent a, .nav-dropcontent form, .nav-bar input {
     float: none;
     color: var(--menu-font-color);
     padding: var(--menu-padding);
     text-decoration: none;
     display: block;
     text-align: left;
+    width: 100%;
+}
+
+.nav-dropcontent form {
+    padding: 0;
+}
+
+.nav-dropcontent input {
+    padding-right: auto;
 }
 
 .nav-dropcontent a:hover, .nav-dropcontent form:hover {

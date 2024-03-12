@@ -1,0 +1,41 @@
+{
+	"GoLang Web Handlers Template": {
+		"scope": "go",
+		"prefix": "go-handler",
+		"body": [
+			"package ${0}",
+			"",
+			"import (",
+			"	\"log\"",
+			"	\"net/http\"",
+			"	\"website/global\"",
+			"",
+			"	\"github.com/gin-gonic/gin\"",
+			")",
+			"",
+			"var dir_prefix string = \"apps/${0}/\"",
+			"var HTML = dir_prefix + \"static/templates/${0}.html\"",
+			"",
+			"func LoadAppStaticFiles(router *gin.Engine) {",
+			"	router.Static(\"/${0}/images\", dir_prefix+\"static/images\")",
+			"	router.Static(\"/${0}/styles\", dir_prefix+\"static/styles\")",
+			"	router.Static(\"/${0}/scripts\", dir_prefix+\"static/scripts\")",
+			"}",
+			"",
+			"func AppHandler(context *gin.Context) {",
+			"	context.HTML(http.StatusOK, \"${0}.html\", gin.H{",
+			"		\"faviconURL\":      \"/images/cat.png\",",
+			"		\"githubURL\":       \"/images/github.png\",",
+			"		\"linkeinURL\":      \"/images/linkedin.png\",",
+			"		\"superStyle\":      \"/styles/super.css\",",
+			"		\"projects\":        global.Projects,",
+			"		\"hobbies\":         global.Hobbies,",
+			"		\"thisStyle\":       \"/${0}/styles/${0}.css\",",
+			"		\"thisScript\":      \"/${0}/scripts/${0}.js\",",
+			"	})",
+			"}",
+			""
+		],
+		"description": "Template for GoLang handlers"
+	}	
+}

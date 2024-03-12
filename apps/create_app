@@ -1,0 +1,23 @@
+APP_NAME=$1
+
+#? Create app directory
+mkdir $APP_NAME
+cd $APP_NAME
+
+#? Create handler file
+touch $APP_NAME.go
+
+#? Create static scaffolding
+mkdir static
+cd static
+
+mkdir images
+
+mkdir scripts
+touch scripts/$APP_NAME.js
+
+mkdir styles
+touch styles/$APP_NAME.css
+
+mkdir templates
+touch templates/$APP_NAME.html
