@@ -43,6 +43,17 @@ BODY {
     color: var(--main-text-color);
 }
 
+/*? REMOVE STYLE FROM HTTP REQUESTS  */
+button, input[type="submit"], input[type="reset"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
 /*? NAVIGATION BAR */
 
 .nav-bar {
@@ -53,7 +64,7 @@ BODY {
     box-shadow: var(--shadow);
 }
 
-.nav-bar a {
+.nav-bar a, .nav-bar form {
     float: left;
 
     color: var(--menu-font-color);
@@ -92,7 +103,7 @@ BODY {
     background-color: inherit;
 }
 
-.nav-bar a:hover, .nav-dropdown:hover .nav-dropbtn {
+.nav-bar a:hover, .nav-dropdown:hover .nav-dropbtn, .nav-bar form:hover {
     background-color: var(--menu-hover-color);
     color: var(--menu-hover-font-color);
 }
@@ -106,7 +117,7 @@ BODY {
     z-index: 10;
 }
 
-.nav-dropcontent a {
+.nav-dropcontent a, .nav-dropcontent form {
     float: none;
     color: var(--menu-font-color);
     padding: var(--menu-padding);
@@ -115,7 +126,7 @@ BODY {
     text-align: left;
 }
 
-.nav-dropcontent a:hover {
+.nav-dropcontent a:hover, .nav-dropcontent form:hover {
     background-color: var(--menu-hover-color);
 }
 

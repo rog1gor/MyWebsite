@@ -10,12 +10,16 @@
     <body class="light">
         <input type="hidden" id="chessPiecesJSON" value="{{ .chessPiecesJSON }}">
         <div class="nav-bar">
-            <a href="#home">Home</a>
+            <form action="/homepage" method="GET">
+                <input type="submit" value="Home">
+            </form>
             <div class="nav-dropdown">
                 <button class="nav-dropbtn">Projects</button>
                 <div class="nav-dropcontent">
                     {{range .projects}}
-                    <a href="#">{{.}}</a>
+                    <form action="/{{.}}" method="GET">
+                        <input type="submit" value="{{.}}">
+                    </form>
                     {{end}}
                 </div>
             </div>
@@ -23,7 +27,9 @@
                 <button class="nav-dropbtn">Hobbies</button>
                 <div class="nav-dropcontent">
                     {{range .hobbies}}
-                    <a href="#">{{.}}</a>
+                    <form action="/{{.}}" method="GET">
+                        <input type="submit" value="{{.}}">
+                    </form>
                     {{end}}
                 </div>
             </div>

@@ -33,6 +33,6 @@ func main() {
 	chess_game.LoadChessGameStaticFiles(router)
 
 	router.GET("/homepage", homepageHandler)
-	router.GET("/chess_game", chess_game.ChessGameHandler)
+	router.GET("/Chess", chess_game.ChessGameHandler)
 	router.Run()
 }
